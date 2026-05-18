@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ProductService.Infrastructure.Persistence
 {
-    public class ProductDbContext : DbContext
+    public class ProductDbContext : DbContext,IProductDbContext
     {
         public DbSet<Product> Products => Set<Product>();
 

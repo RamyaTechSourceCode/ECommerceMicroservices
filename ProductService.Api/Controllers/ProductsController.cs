@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Api.Requests;
 using ProductService.Application.CreateProducts;
+using ProductService.Application.GetProducts;
 using ProductService.Application.Interfaces;
 using ProductService.Domain.Entities;
 
@@ -36,6 +37,17 @@ namespace ProductService.Api.Controllers
             return Ok(id);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var product = await _mediator.Send(
+                new GetProductByIdQuery(id));
+
+            if (product is null)
+                return NotFound();
+
+            return Ok(product);
+        }
         /*
         private readonly IProductRepository _repository;
 

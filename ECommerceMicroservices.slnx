@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/ApiGateway/">
+    <Project Path="ApiGateway/ApiGateway.csproj" />
+  </Folder>
   <Folder Name="/services/" />
   <Folder Name="/services/ProductService/">
     <Project Path="ProductService.Api/ProductService.Api.csproj" />

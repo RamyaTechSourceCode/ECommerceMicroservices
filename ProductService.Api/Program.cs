@@ -25,6 +25,9 @@ builder.Services.AddDbContext<ProductDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.AddScoped<IProductDbContext>(
+    provider => provider.GetRequiredService<ProductDbContext>());
+
 builder.Services.AddMediatR(cfg =>
    cfg.RegisterServicesFromAssembly(typeof(Handler).Assembly));
 
