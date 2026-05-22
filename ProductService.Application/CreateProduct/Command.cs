@@ -7,7 +7,7 @@ using MediatR;
 
 namespace ProductService.Application.CreateProducts
 {
-    public record Command(
+    public record CreateProductCommand(
       string Name,
       string Description,
       decimal Price,

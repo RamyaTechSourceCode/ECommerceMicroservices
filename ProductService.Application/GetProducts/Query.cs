@@ -8,5 +8,9 @@ using System.Threading.Tasks;
 
 namespace ProductService.Application.GetProducts
 {
-    public record GetProductByIdQuery(Guid Id) : IRequest<ProductDto>;
+    public record GetProductsQuery(
+    int Page = 1,
+    int PageSize = 10,
+    string? Search = null
+    ) : IRequest<List<ProductDto>>;
 }

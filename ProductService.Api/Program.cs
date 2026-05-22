@@ -1,16 +1,50 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using ProductService.Application.CreateProducts;
 using ProductService.Application.Interfaces;
 using ProductService.Infrastructure.Persistence;
 using ProductService.Infrastructure.Repositories;
+using System.Reflection.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// JWT Auth setup
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddAuthorization(options =>
+{
+    // policy based authorization
+    options.AddPolicy("AccessAsUserAndAdmin", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var scp = context.User.Claims
+                      .FirstOrDefault(c =>
+                          c.Type == "scp" ||
+                          c.Type.EndsWith("/scope") ||
+                          c.Type.EndsWith("identity/claims/scope"))
+                      ?.Value;
+
+            var hasScope = !string.IsNullOrWhiteSpace(scp)
+                && scp.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                      .Contains("access_as_user");
+
+            var isAdmin = context.User.IsInRole("Admin");
+
+            return  hasScope && isAdmin;
+        });
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -29,7 +63,8 @@ builder.Services.AddScoped<IProductDbContext>(
     provider => provider.GetRequiredService<ProductDbContext>());
 
 builder.Services.AddMediatR(cfg =>
-   cfg.RegisterServicesFromAssembly(typeof(Handler).Assembly));
+    cfg.RegisterServicesFromAssembly(
+        typeof(CreateProductHandler).Assembly));// registers assembly for all handlers (gets the DLL/assembly containing that type)
 
 /*
 //FluentValidation works without a MediatR pipeline if no MediatR used
@@ -54,6 +89,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseExceptionHandler(errorApp =>

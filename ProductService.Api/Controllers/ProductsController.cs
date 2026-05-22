@@ -2,15 +2,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web.Resource;
 using ProductService.Api.Requests;
 using ProductService.Application.CreateProducts;
-using ProductService.Application.GetProducts;
+using ProductService.Application.DeleteProduct;
+using ProductService.Application.GetProductById;
 using ProductService.Application.Interfaces;
+using ProductService.Application.UpdateProducts;
 using ProductService.Domain.Entities;
 
 namespace ProductService.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/products")]
     public class ProductsController : ControllerBase
     {
@@ -24,9 +28,10 @@ namespace ProductService.Api.Controllers
         //Implementing CQRS [Command Query Responsibility Segregation] 
         // with mediator
         [HttpPost]
+        [Authorize(Policy = "AccessAsUserAndAdmin")]
         public async Task<IActionResult> Create(CreateProductRequest request)
         {
-            var command = new Command(
+            var command = new CreateProductCommand(
                request.Name,
                request.Description,
                request.Price,
@@ -36,10 +41,14 @@ namespace ProductService.Api.Controllers
 
             return Ok(id);
         }
-
+       
+       
         [HttpGet("{id}")]
+        [RequiredScope("Product.Read")]
         public async Task<IActionResult> GetById(Guid id)
         {
+            Console.WriteLine(Request.Headers.Authorization);
+
             var product = await _mediator.Send(
                 new GetProductByIdQuery(id));
 
@@ -47,6 +56,29 @@ namespace ProductService.Api.Controllers
                 return NotFound();
 
             return Ok(product);
+        }
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+        Guid id, UpdateProductCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest();
+
+            var result = await _mediator.Send(command);
+
+            return result ? Ok() : NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [RequiredScope("access_as_user")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _mediator.Send(
+                new DeleteProductCommand(id));
+
+            return result ? Ok() : NotFound();
         }
         /*
         private readonly IProductRepository _repository;

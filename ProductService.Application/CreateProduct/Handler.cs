@@ -5,19 +5,19 @@ using ProductService.Domain.Entities;
 
 namespace ProductService.Application.CreateProducts
 {
-    public class Handler
-     : IRequestHandler<Command, Guid> // for MediatR
+    public class CreateProductHandler
+     : IRequestHandler<CreateProductCommand, Guid> // for MediatR
     {
         //hander -> dbcontext
         private readonly IProductDbContext _context;
 
-        public Handler(IProductDbContext context)
+        public CreateProductHandler(IProductDbContext context)
         {
             _context = context;
         }
 
         public async Task<Guid> Handle(
-            Command request,
+            CreateProductCommand request,
             CancellationToken cancellationToken)
         {
             var product = new Product(

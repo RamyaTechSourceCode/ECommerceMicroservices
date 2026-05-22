@@ -9,7 +9,7 @@ using FluentValidation;
 namespace ProductService.Application.CreateProducts
 {
     public class Validator 
-        : AbstractValidator<Command>
+        : AbstractValidator<CreateProductCommand>
     {
         public Validator()
         {

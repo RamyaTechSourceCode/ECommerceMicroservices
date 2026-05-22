@@ -10,31 +10,41 @@ using System.Threading.Tasks;
 
 namespace ProductService.Application.GetProducts
 {
-    public class Handler
-    : IRequestHandler<GetProductByIdQuery, ProductDto?>
+    public class GetProductsHandler
+    : IRequestHandler<GetProductsQuery, List<ProductDto>>
     {
         private readonly IProductDbContext _context;
 
-        public Handler(IProductDbContext context)
+        public GetProductsHandler(IProductDbContext context)
         {
             _context = context;
         }
 
-        public async Task<ProductDto?> Handle(
-            GetProductByIdQuery request,
+        public async Task<List<ProductDto>> Handle(
+            GetProductsQuery request,
             CancellationToken cancellationToken)
         {
-            return await _context.Products
-            .Where(x => x.Id == request.Id)
-            .Select(x => new ProductDto
+            var query = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                Id = x.Id,
-                Name = x.Name,
-                Price = x.Price,
-                StockQuantity = x.StockQuantity,
-                Description = x.Description
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+                query = query.Where(x =>
+                    x.Name.Contains(request.Search));
+            }
+
+            return await query
+                .OrderByDescending(x => x.CreatedAt)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new ProductDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    StockQuantity = x.StockQuantity
+                })
+                .ToListAsync(cancellationToken);
         }
     }
 }
