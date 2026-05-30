@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using ECommerce.Contracts.Events;
+using ECommerce.Messaging.Abstractions;
+using FluentValidation;
 using MediatR;
 using ProductService.Application.Interfaces;
 using ProductService.Domain.Entities;
@@ -10,8 +12,9 @@ namespace ProductService.Application.CreateProducts
     {
         //hander -> dbcontext
         private readonly IProductDbContext _context;
+        private readonly IEventBus _bus;
 
-        public CreateProductHandler(IProductDbContext context)
+        public CreateProductHandler(IProductDbContext context, IEventBus bus)
         {
             _context = context;
         }
@@ -29,6 +32,15 @@ namespace ProductService.Application.CreateProducts
             _context.Products.Add(product);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            //publish event
+            var evt = new ProductCreatedEvent
+            {
+                ProductId = product.Id,
+                Name = request.Name
+            };
+
+            await _bus.PublishAsync("product.created", evt);
 
             return product.Id;
         }

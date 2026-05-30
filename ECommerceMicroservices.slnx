@@ -2,11 +2,24 @@
   <Folder Name="/ApiGateway/">
     <Project Path="ApiGateway/ApiGateway.csproj" />
   </Folder>
-  <Folder Name="/services/" />
+  <Folder Name="/services/">
+    <Project Path="ECommerce.Contracts/ECommerce.Contracts.csproj" Id="6612aa0f-2e4a-43e3-a6db-9212bc63d799" />
+    <Project Path="ECommerce.Messaging/ECommerce.Messaging.csproj" Id="5bbe6404-d3a2-402e-9aba-aa5dd5d7664f" />
+  </Folder>
+  <Folder Name="/services/InventoryService/">
+    <Project Path="InventoryService.Infrastructure/InventoryService.Infrastructure.csproj" Id="ec6c7cc1-c702-4847-808e-240b2942e7c6" />
+  </Folder>
+  <Folder Name="/services/OrderService/">
+    <Project Path="Services/OrderService/OrderService.Api/OrderService.Api.csproj" />
+    <Project Path="Services/OrderService/OrderService.Application/OrderService.Application.csproj" />
+    <Project Path="Services/OrderService/OrderService.Domain/OrderService.Domain.csproj" />
+    <Project Path="Services/OrderService/OrderService.Infrastructure/OrderService.Infrastructure.csproj" />
+    <Project Path="Services/OrderService/Shared.Contracts/Shared.Contracts.csproj" />
+  </Folder>
   <Folder Name="/services/ProductService/">
-    <Project Path="ProductService.Api/ProductService.Api.csproj" />
-    <Project Path="ProductService.Application/ProductService.Application.csproj" />
-    <Project Path="ProductService.Domain/ProductService.Domain.csproj" />
-    <Project Path="ProductService.Infrastructure/ProductService.Infrastructure.csproj" />
+    <Project Path="Services/ProductService/ProductService.Api/ProductService.Api.csproj" />
+    <Project Path="Services/ProductService/ProductService.Application/ProductService.Application.csproj" />
+    <Project Path="Services/ProductService/ProductService.Domain/ProductService.Domain.csproj" />
+    <Project Path="Services/ProductService/ProductService.Infrastructure/ProductService.Infrastructure.csproj" />
   </Folder>
 </Solution>
