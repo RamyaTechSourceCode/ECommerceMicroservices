@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using OrderService.Application.CreateOrder;
 using OrderService.Infrastructure.Messaging.Kafka.Consumers;
 using OrderService.Infrastructure.Messaging.Kafka.Producers;
@@ -7,6 +9,10 @@ using OrderService.Infrastructure.Persistence;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();

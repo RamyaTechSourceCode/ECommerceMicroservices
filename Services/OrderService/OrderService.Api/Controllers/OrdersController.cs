@@ -1,11 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.Application.CreateOrder;
 using OrderService.Application.GetOrder;
 using StackExchange.Redis;
 
+
 [ApiController]
-[Route("orders")]
+[Route("api/orders")]
+[Authorize]
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
