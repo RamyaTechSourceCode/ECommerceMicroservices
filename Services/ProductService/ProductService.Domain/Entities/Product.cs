@@ -14,34 +14,29 @@ namespace ProductService.Domain.Entities
 
         public decimal Price { get;  set; }
 
-        public int StockQuantity { get;  set; }
-
+       
         public DateTime CreatedAt { get;  set; }
 
         public Product(
             string name,
             string description,
-            decimal price,
-            int stockQuantity)
+            decimal price)
         {
             Id = Guid.NewGuid();
             Name = name;
             Description = description;
             Price = price;
-            StockQuantity = stockQuantity;
             CreatedAt = DateTime.UtcNow;
         }
 
         public void Update(
             string name,
             string description,
-            decimal price,
-            int stockQuantity)
+            decimal price)
         {
             Name = name;
             Description = description;
             Price = price;
-            StockQuantity = stockQuantity;
         }
     }
 }

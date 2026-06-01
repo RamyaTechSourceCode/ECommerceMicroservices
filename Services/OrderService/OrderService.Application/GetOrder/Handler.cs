@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OrderService.Infrastructure.Messaging.Redis.Projections;
-using OrderService.Infrastructure.Persistence;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -15,9 +13,9 @@ namespace OrderService.Application.GetOrder
    public class GetOrderHandler : IRequestHandler<GetOrderQuery, OrderReadModel?>
 {
     private readonly IDatabase _redis;
-    private readonly OrderDbContext _db;
+    private readonly IOrderDbContext _db;
 
-    public GetOrderHandler(IConnectionMultiplexer redis, OrderDbContext db)
+    public GetOrderHandler(IConnectionMultiplexer redis, IOrderDbContext db)
     {
         _redis = redis.GetDatabase();
         _db = db;

@@ -34,8 +34,7 @@ namespace ProductService.Application.UpdateProducts
             product.Update(
                 request.Name,
                 request.Description,
-                request.Price,
-                request.StockQuantity);
+                request.Price);
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -31,7 +31,6 @@ namespace ProductService.Application.GetProductById
                 Id = x.Id,
                 Name = x.Name,
                 Price = x.Price,
-                StockQuantity = x.StockQuantity,
                 Description = x.Description
             })
             .FirstOrDefaultAsync(cancellationToken);

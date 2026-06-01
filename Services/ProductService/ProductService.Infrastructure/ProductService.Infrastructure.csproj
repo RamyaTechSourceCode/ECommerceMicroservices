@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="ExternalServices\" />
     <Folder Include="Messaging\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,6 +17,7 @@ namespace ProductService.Application.CreateProducts
         public CreateProductHandler(IProductDbContext context, IEventBus bus)
         {
             _context = context;
+            _bus = bus;
         }
 
         public async Task<Guid> Handle(
@@ -26,8 +27,7 @@ namespace ProductService.Application.CreateProducts
             var product = new Product(
                 request.Name,
                 request.Description,
-                request.Price,
-                request.StockQuantity);
+                request.Price);
 
             _context.Products.Add(product);
 
@@ -37,7 +37,8 @@ namespace ProductService.Application.CreateProducts
             var evt = new ProductCreatedEvent
             {
                 ProductId = product.Id,
-                Name = request.Name
+                Name = request.Name,
+                StockQuantity = request.StockQuantity
             };
 
             await _bus.PublishAsync("product.created", evt);

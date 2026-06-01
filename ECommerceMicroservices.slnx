@@ -7,7 +7,10 @@
     <Project Path="ECommerce.Messaging/ECommerce.Messaging.csproj" Id="5bbe6404-d3a2-402e-9aba-aa5dd5d7664f" />
   </Folder>
   <Folder Name="/services/InventoryService/">
-    <Project Path="InventoryService.Infrastructure/InventoryService.Infrastructure.csproj" Id="ec6c7cc1-c702-4847-808e-240b2942e7c6" />
+    <Project Path="Services/InventoryService/InventoryService.Api/InventoryService.Api.csproj" />
+    <Project Path="Services/InventoryService/InventoryService.Application/InventoryService.Application.csproj" />
+    <Project Path="Services/InventoryService/InventoryService.Domain/InventoryService.Domain.csproj" />
+    <Project Path="Services/InventoryService/InventoryService.Infrastructure/InventoryService.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/services/OrderService/">
     <Project Path="Services/OrderService/OrderService.Api/OrderService.Api.csproj" />

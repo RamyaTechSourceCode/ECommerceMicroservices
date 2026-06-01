@@ -1,3 +1,5 @@
+using ECommerce.Messaging.Abstractions;
+using ECommerce.Messaging.Kafka;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -65,6 +67,8 @@ builder.Services.AddScoped<IProductDbContext>(
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(
         typeof(CreateProductHandler).Assembly));// registers assembly for all handlers (gets the DLL/assembly containing that type)
+
+builder.Services.AddSingleton<IEventBus, KafkaEventBus>();
 
 /*
 //FluentValidation works without a MediatR pipeline if no MediatR used

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderService.Infrastructure.Messaging.Redis.Projections
+namespace OrderService.Application.GetOrder
 {
     public class OrderReadModel
     {

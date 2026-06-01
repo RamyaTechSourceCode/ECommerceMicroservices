@@ -1,8 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using OrderService.Infrastructure.Messaging.Redis.Projections;
-using Shared.Contracts.Orders.Kafka;
+using OrderService.Application.GetOrder;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using OrderService.Infrastructure.Messaging.Redis.Projections;
 using System;
 using System.Collections.Generic;
 using System.Linq;

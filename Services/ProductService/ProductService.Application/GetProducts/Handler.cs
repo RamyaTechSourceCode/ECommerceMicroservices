@@ -41,8 +41,7 @@ namespace ProductService.Application.GetProducts
                     Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
-                    Price = x.Price,
-                    StockQuantity = x.StockQuantity
+                    Price = x.Price
                 })
                 .ToListAsync(cancellationToken);
         }
