@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryService.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260601090331_AddInventoryTable")]
+    [Migration("20260604173910_AddInventoryTable")]
     partial class AddInventoryTable
     {
         /// <inheritdoc />
@@ -43,6 +43,32 @@ namespace InventoryService.Infrastructure.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("InventoryService.Domain.Entities.InventoryReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryReservations");
                 });
 #pragma warning restore 612, 618
         }

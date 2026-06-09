@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderService.Application;
+using OrderService.Application.Sagas;
 using OrderService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,23 @@ namespace OrderService.Infrastructure.Persistence
         }
 
         public DbSet<Order> Orders { get; set; }
-
+        public DbSet<OrderState> OrderStates { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Order>().OwnsMany(x => x.Items);
+            base.OnModelCreating(builder);
+
+            // Order aggregate
+            builder.Entity<Order>()
+                .OwnsMany(x => x.Items);
+           
+            // Saga state mapping
+            builder.Entity<OrderState>(x =>
+            {
+                x.HasKey(p => p.CorrelationId); //  PK for saga
+
+
+                x.Property(p => p.OrderId);
+            });
         }
     }
 }

@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application
 {
-    public record CancelOrderCommand(Guid OrderId, string Reason)
+    public record CancelOrderCommand(Guid CorrelationId,Guid OrderId, string Reason)
     : IRequest;
 }

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application
 {
-    public record ConfirmOrderCommand(Guid OrderId) : IRequest;
+    public record ConfirmOrderCommand(Guid CorrelationId,Guid OrderId) : IRequest;
 }

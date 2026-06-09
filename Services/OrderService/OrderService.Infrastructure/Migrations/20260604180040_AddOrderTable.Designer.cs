@@ -12,7 +12,7 @@ using OrderService.Infrastructure.Persistence;
 namespace OrderService.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderDbContext))]
-    [Migration("20260528034610_AddOrderTable")]
+    [Migration("20260604180040_AddOrderTable")]
     partial class AddOrderTable
     {
         /// <inheritdoc />
@@ -25,10 +25,48 @@ namespace OrderService.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("OrderService.Application.Sagas.OrderState", b =>
+                {
+                    b.Property<Guid>("CorrelationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CurrentState")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FailedItems")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PendingProducts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReservedItems")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReservedProducts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalItems")
+                        .HasColumnType("int");
+
+                    b.HasKey("CorrelationId");
+
+                    b.ToTable("OrderStates");
+                });
+
             modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")

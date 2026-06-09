@@ -21,73 +21,78 @@ namespace InventoryService.Infrastructure.Messaging.Consumers
 
     public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
     {
-        private readonly InventoryDbContext _db;
-        private readonly ITopicProducer<InventoryReservedEvent> _producer;
-        private readonly ITopicProducer<InventoryRejectedEvent> _rejectedProducer;
-
-        public OrderCreatedConsumer(InventoryDbContext db, 
-            ITopicProducer<InventoryReservedEvent> producer,
-            ITopicProducer<InventoryRejectedEvent> rejectedProducer)
+        public Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
-            _db = db;
-            _producer = producer;
-            _rejectedProducer = rejectedProducer;
+            Console.WriteLine($"Consumer received {context.Message.OrderId}");
+            return Task.CompletedTask;
         }
+        /*   private readonly InventoryDbContext _db;
+           private readonly ITopicProducer<InventoryReservedEvent> _producer;
+           private readonly ITopicProducer<InventoryRejectedEvent> _rejectedProducer;
 
-        public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
-        {
-            var order = context.Message;
+           public OrderCreatedConsumer(InventoryDbContext db, 
+               ITopicProducer<InventoryReservedEvent> producer,
+               ITopicProducer<InventoryRejectedEvent> rejectedProducer)
+           {
+               _db = db;
+               _producer = producer;
+               _rejectedProducer = rejectedProducer;
+           }
 
-            var canReserve = true;
+           public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
+           {
+               var order = context.Message;
 
-            foreach (var item in order.Items)
-            {
-                var stock = await _db.Inventories
-                    .FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
+               var canReserve = true;
 
-                if (stock == null || stock.Quantity < item.Quantity)
-                {
-                    canReserve = false;
-                    break;
-                }
-            }
+               foreach (var item in order.Items)
+               {
+                   var stock = await _db.Inventories
+                       .FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
 
-            if (!canReserve)
-            {
-               /* await context.Publish(new InventoryRejectedEvent
-                {
-                    OrderId = order.OrderId,
-                    Reason = "Insufficient stock"
-                });*/
-                await _rejectedProducer.Produce(new InventoryRejectedEvent
-                {
-                    OrderId = order.OrderId,
-                    Reason = "Insufficient stock"
-                });
-                return;
-            }
+                   if (stock == null || stock.Quantity < item.Quantity)
+                   {
+                       canReserve = false;
+                       break;
+                   }
+               }
 
-            foreach (var item in order.Items)
-            {
-                var stock = await _db.Inventories
-                    .FirstAsync(x => x.ProductId == item.ProductId);
+               if (!canReserve)
+               {
+                  /* await context.Publish(new InventoryRejectedEvent
+                   {
+                       OrderId = order.OrderId,
+                       Reason = "Insufficient stock"
+                   });
+                   await _rejectedProducer.Produce(new InventoryRejectedEvent
+                   {
+                       OrderId = order.OrderId,
+                       Reason = "Insufficient stock"
+                   });
+                   return;
+               }
 
-                stock.Quantity -= item.Quantity;
-            }
+               foreach (var item in order.Items)
+               {
+                   var stock = await _db.Inventories
+                       .FirstAsync(x => x.ProductId == item.ProductId);
 
-            await _db.SaveChangesAsync();
+                   stock.Quantity -= item.Quantity;
+               }
 
-            /*  await context.Publish(new InventoryReservedEvent
-              {
-                  OrderId = order.OrderId
-              });*/
+               await _db.SaveChangesAsync();
 
-            await _producer.Produce(new InventoryReservedEvent
-            {
-                OrderId = order.OrderId,
-                ReservedAt =  DateTime.UtcNow
-            });
+               /*  await context.Publish(new InventoryReservedEvent
+                 {
+                     OrderId = order.OrderId
+                 });
 
-        }
+               await _producer.Produce(new InventoryReservedEvent
+               {
+                   OrderId = order.OrderId,
+                   ReservedAt =  DateTime.UtcNow
+               });
+
+           }*/
     }
 }

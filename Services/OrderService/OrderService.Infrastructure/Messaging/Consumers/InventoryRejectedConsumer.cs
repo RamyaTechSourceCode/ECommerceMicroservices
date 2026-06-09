@@ -12,20 +12,32 @@ namespace OrderService.Infrastructure.Messaging.Consumers
 {
     public class InventoryRejectedConsumer : IConsumer<InventoryRejectedEvent>
     {
-        private readonly IMediator _mediator;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public InventoryRejectedConsumer(IMediator mediator)
+        public InventoryRejectedConsumer(IPublishEndpoint publishEndpoint)
         {
-            Console.WriteLine("🔥 Consumer CREATED");
-
-            _mediator = mediator;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task Consume(ConsumeContext<InventoryRejectedEvent> context)
         {
-            await _mediator.Send(new CancelOrderCommand(
-                context.Message.OrderId,
-                context.Message.Reason));
+            await _publishEndpoint.Publish(context.Message);
         }
+        /* private readonly IMediator _mediator;
+
+         public InventoryRejectedConsumer(IMediator mediator)
+         {
+             Console.WriteLine("🔥 Consumer CREATED");
+
+             _mediator = mediator;
+         }
+
+         public async Task Consume(ConsumeContext<InventoryRejectedEvent> context)
+         {
+             await _mediator.Send(new CancelOrderCommand(
+                 context.Message.CorrelationId,
+                 context.Message.OrderId,
+                 context.Message.Reason));
+         }*/
     }
 }

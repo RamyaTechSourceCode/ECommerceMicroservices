@@ -16,6 +16,7 @@ namespace OrderService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -24,6 +25,24 @@ namespace OrderService.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderStates",
+                columns: table => new
+                {
+                    CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CurrentState = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalItems = table.Column<int>(type: "int", nullable: false),
+                    ReservedItems = table.Column<int>(type: "int", nullable: false),
+                    FailedItems = table.Column<int>(type: "int", nullable: false),
+                    PendingProducts = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReservedProducts = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderStates", x => x.CorrelationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,6 +73,9 @@ namespace OrderService.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "OrderItem");
+
+            migrationBuilder.DropTable(
+                name: "OrderStates");
 
             migrationBuilder.DropTable(
                 name: "Orders");

@@ -1,4 +1,4 @@
-﻿using InventoryService.Application;
+﻿    using InventoryService.Application;
 using InventoryService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,6 +11,7 @@ namespace InventoryService.Infrastructure.Persistence
     {
         public DbSet<Inventory> Inventories { get; set; }
 
+        public DbSet<InventoryReservation> InventoryReservations { get; set; }
         public InventoryDbContext(DbContextOptions<InventoryDbContext> options)
             : base(options)
         {

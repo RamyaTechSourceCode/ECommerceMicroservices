@@ -9,7 +9,7 @@ namespace OrderService.Domain.Entities
     public class Order
     {
         public Guid Id { get; set; }
-
+        public Guid CorrelationId { get; set; }   // Saga ID
         public Guid CustomerId { get; set; }
 
         public decimal TotalAmount { get; set; }

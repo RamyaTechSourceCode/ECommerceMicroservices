@@ -21,7 +21,10 @@ namespace OrderService.Application
 
         public async Task Handle(ConfirmOrderCommand request, CancellationToken ct)
         {
-            var order = await _db.Orders.FirstAsync(x => x.Id == request.OrderId, ct);
+            var order = await _db.Orders.FirstOrDefaultAsync(x => x.Id == request.OrderId, ct);
+
+            if (order == null) return;
+
 
             order.Status = OrderStatus.Confirmed.ToString();
 

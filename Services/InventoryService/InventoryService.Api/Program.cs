@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using ECommerce.Contracts.Commands;
 using ECommerce.Contracts.Events;
 using InventoryService.Application;
 using InventoryService.Application.Abstractions;
@@ -8,6 +9,7 @@ using InventoryService.Infrastructure.Persistence;
 using MassTransit;
 
 using Microsoft.EntityFrameworkCore;
+using OrderService.Infrastructure.Messaging.Consumers;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,10 +33,12 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
 builder.Services.AddMassTransit(x =>
 {
+   
     // REQUIRED: main bus (fixes IBus error)
     x.UsingInMemory((context, cfg) =>
     {
         cfg.ConfigureEndpoints(context);
+        
     });
 
     
@@ -45,7 +49,7 @@ builder.Services.AddMassTransit(x =>
         rider.AddProducer<InventoryRejectedEvent>("inventory-rejected-event");
 
         rider.AddConsumer<ProductCreatedConsumer>();
-        rider.AddConsumer<OrderCreatedConsumer>();
+        rider.AddConsumer<ReserveInventoryConsumer>();
 
         rider.UsingKafka((context, k) =>
         {
@@ -60,12 +64,12 @@ builder.Services.AddMassTransit(x =>
                     e.AutoOffsetReset = AutoOffsetReset.Earliest;
                 });
 
-            k.TopicEndpoint<OrderCreatedEvent>(
-              "order.created",
+            k.TopicEndpoint<ReserveInventoryCommand>(
+              "reserve.inventory",
               "inventory.service",
               e =>
               {
-                  e.ConfigureConsumer<OrderCreatedConsumer>(context);
+                  e.ConfigureConsumer<ReserveInventoryConsumer>(context);
                   e.AutoOffsetReset = AutoOffsetReset.Earliest;
               });
 

@@ -1,4 +1,5 @@
-﻿using ECommerce.Contracts.Events;
+﻿using ECommerce.Contracts.Commands;
+using ECommerce.Contracts.Events;
 using ECommerce.Messaging.Kafka;
 using InventoryService.Application;
 using MassTransit;

@@ -9,6 +9,7 @@ namespace ECommerce.Contracts.Events
 {
     public record OrderCreatedEvent 
     {
+        public Guid CorrelationId { get; set; }
         public Guid OrderId { get; set; }
         public Guid CustomerId { get; set; }
 

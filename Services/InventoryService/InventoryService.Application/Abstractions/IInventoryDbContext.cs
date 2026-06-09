@@ -11,7 +11,7 @@ namespace InventoryService.Application
     public interface IInventoryDbContext
     {
         public DbSet<Inventory> Inventories { get; set; }
-
+        public DbSet<InventoryReservation> InventoryReservations { get; set; }
         Task<int> SaveChangesAsync(
        CancellationToken cancellationToken);
     }
