@@ -12,6 +12,8 @@ namespace ProductService.Application.UpdateProducts
     string Name,
     string Description,
     decimal Price,
-    int StockQuantity
+    int StockQuantity,
+    string Category,
+    string Status
     ) : IRequest<bool>;
 }

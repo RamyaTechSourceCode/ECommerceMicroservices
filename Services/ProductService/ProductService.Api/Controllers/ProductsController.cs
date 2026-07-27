@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.Resource;
@@ -7,6 +8,7 @@ using ProductService.Api.Requests;
 using ProductService.Application.CreateProducts;
 using ProductService.Application.DeleteProduct;
 using ProductService.Application.GetProductById;
+using ProductService.Application.GetProducts;
 using ProductService.Application.Interfaces;
 using ProductService.Application.UpdateProducts;
 using ProductService.Domain.Entities;
@@ -14,8 +16,9 @@ using ProductService.Domain.Entities;
 namespace ProductService.Api.Controllers
 {
     [ApiController]
-    [Authorize]
+   // [Authorize]
     [Route("api/products")]
+   
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -28,14 +31,16 @@ namespace ProductService.Api.Controllers
         //Implementing CQRS [Command Query Responsibility Segregation] 
         // with mediator
         [HttpPost]
-        [Authorize(Policy = "AccessAsUserAndAdmin")]
+       // [Authorize(Policy = "AccessAsUserAndAdmin")]
         public async Task<IActionResult> Create(CreateProductRequest request)
         {
             var command = new CreateProductCommand(
                request.Name,
                request.Description,
                request.Price,
-               request.StockQuantity);
+               request.StockQuantity,
+               request.Category,
+               request.Status);
 
             var id = await _mediator.Send(command);
 
@@ -60,7 +65,7 @@ namespace ProductService.Api.Controllers
         
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(
-        Guid id, UpdateProductCommand command)
+        Guid id, [FromBody] UpdateProductCommand command)
         {
             if (id != command.Id)
                 return BadRequest();
@@ -71,14 +76,28 @@ namespace ProductService.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        [RequiredScope("access_as_user")]
+       // [Authorize(Roles = "Admin")]
+       // [RequiredScope("access_as_user")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _mediator.Send(
                 new DeleteProductCommand(id));
 
             return result ? Ok() : NotFound();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            Console.WriteLine(Request.Headers.Authorization);
+
+            var product = await _mediator.Send(
+                new GetProductsQuery());
+
+            if (product is null)
+                return NotFound();
+
+            return Ok(product);
         }
         /*
         private readonly IProductRepository _repository;

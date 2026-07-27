@@ -1,7 +1,9 @@
+using ECommerce.Contracts.Events;
 using ECommerce.Messaging.Abstractions;
 using ECommerce.Messaging.Kafka;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using ProductService.Application.CreateProducts;
 using ProductService.Application.Interfaces;
+using ProductService.Domain.Entities;
 using ProductService.Infrastructure.Persistence;
 using ProductService.Infrastructure.Repositories;
 using System.Reflection.Metadata;
@@ -70,6 +73,20 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddSingleton<IEventBus, KafkaEventBus>();
 
+/*builder.Services.AddMassTransit(x =>
+{
+    x.UsingInMemory((context, cfg) => { });
+
+    x.AddRider(rider =>
+    {
+        rider.AddProducer<ProductCreatedEvent>("product.created");
+
+        rider.UsingKafka((context, k) =>
+        {
+            k.Host("localhost:9092");
+        });
+    });
+});*/
 /*
 //FluentValidation works without a MediatR pipeline if no MediatR used
 builder.Services.AddFluentValidationAutoValidation();
@@ -123,5 +140,7 @@ app.UseExceptionHandler(errorApp =>
 });
 
 app.MapControllers();
+
+
 
 app.Run();

@@ -1,9 +1,12 @@
 ﻿using ECommerce.Contracts.Events;
 using ECommerce.Messaging.Abstractions;
 using FluentValidation;
+using MassTransit;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ProductService.Application.Interfaces;
 using ProductService.Domain.Entities;
+using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace ProductService.Application.CreateProducts
 {
@@ -13,13 +16,17 @@ namespace ProductService.Application.CreateProducts
         //hander -> dbcontext
         private readonly IProductDbContext _context;
         private readonly IEventBus _bus;
+        //private readonly ITopicProducer<ProductCreatedEvent> _producer;
 
-        public CreateProductHandler(IProductDbContext context, IEventBus bus)
+        public CreateProductHandler(IProductDbContext context,
+            //ITopicProducer<ProductCreatedEvent> producer)
+            IEventBus bus)
         {
             _context = context;
+           // _producer = producer;
             _bus = bus;
         }
-
+       
         public async Task<Guid> Handle(
             CreateProductCommand request,
             CancellationToken cancellationToken)
@@ -27,23 +34,38 @@ namespace ProductService.Application.CreateProducts
             var product = new Product(
                 request.Name,
                 request.Description,
-                request.Price);
+                request.Price,
+                request.Category,
+                request.Status);
 
             _context.Products.Add(product);
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            //publish event
+           //  publish to kafka using IEventBus
             var evt = new ProductCreatedEvent
             {
                 ProductId = product.Id,
                 Name = request.Name,
-                StockQuantity = request.StockQuantity
+                StockQuantity = request.StockQuantity,
+                Price = request.Price,
+                Description = request.Description,
+                Category = request.Category,
+                Status = request.Status
             };
 
             await _bus.PublishAsync("product.created", evt);
 
+            //publish to masstransit
+            /*await _producer.Produce(new ProductCreatedEvent
+            {
+                ProductId = product.Id,
+                Name = product.Name,
+                StockQuantity = request.StockQuantity
+            });*/
+
             return product.Id;
+
         }
         /*
         // handler -> repository-> dbcontext

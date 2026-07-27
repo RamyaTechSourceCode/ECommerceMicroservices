@@ -33,7 +33,7 @@ namespace ProductService.Application.GetProducts
             }
 
             return await query
-                .OrderByDescending(x => x.CreatedAt)
+                .OrderByDescending(x => x.UpdatedAt)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(x => new ProductDto
@@ -41,7 +41,9 @@ namespace ProductService.Application.GetProducts
                     Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
-                    Price = x.Price
+                    Price = x.Price,
+                    Category = x.Category,
+                    Status = x.Status
                 })
                 .ToListAsync(cancellationToken);
         }

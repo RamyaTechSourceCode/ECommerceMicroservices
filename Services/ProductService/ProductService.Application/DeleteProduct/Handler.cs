@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using ECommerce.Contracts.Events;
+using ECommerce.Messaging.Abstractions;
+using MediatR;
 using ProductService.Application.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,12 @@ namespace ProductService.Application.DeleteProduct
     : IRequestHandler<DeleteProductCommand, bool>
     {
         private readonly IProductDbContext _context;
+        private readonly IEventBus _bus;
 
-        public DeleteProductHandler(IProductDbContext context)
+        public DeleteProductHandler(IProductDbContext context, IEventBus bus)
         {
             _context = context;
+            _bus = bus;
         }
 
         public async Task<bool> Handle(
@@ -28,9 +32,27 @@ namespace ProductService.Application.DeleteProduct
             if (product == null)
                 return false;
 
-            _context.Products.Remove(product);
+            product.Status = "Deleted";
+            product.UpdatedAt = DateTime.UtcNow;
 
+            
             await _context.SaveChangesAsync(cancellationToken);
+
+            //  publish to kafka using IEventBus
+            var evt = new ProductDeletedEvent
+            {
+                ProductId = product.Id,
+            };
+
+            await _bus.PublishAsync("product.deleted", evt);
+
+            //publish to masstransit
+            /*await _producer.Produce(new ProductCreatedEvent
+            {
+                ProductId = product.Id,
+                Name = product.Name,
+                StockQuantity = request.StockQuantity
+            });*/
 
             return true;
         }

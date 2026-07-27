@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using ECommerce.Contracts.Events;
+using ECommerce.Messaging.Abstractions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Application.Interfaces;
 using System;
@@ -13,10 +15,11 @@ namespace ProductService.Application.UpdateProducts
       : IRequestHandler<UpdateProductCommand, bool>
     {
         private readonly IProductDbContext _context;
-
-        public UpdateProductHandler(IProductDbContext context)
+        private readonly IEventBus _bus;
+        public UpdateProductHandler(IProductDbContext context, IEventBus bus)
         {
             _context = context;
+            _bus = bus;
         }
 
         public async Task<bool> Handle(
@@ -34,9 +37,23 @@ namespace ProductService.Application.UpdateProducts
             product.Update(
                 request.Name,
                 request.Description,
-                request.Price);
+                request.Price,
+                request.Category,
+                request.Status);
 
             await _context.SaveChangesAsync(cancellationToken);
+            //  publish to kafka using IEventBus
+            var evt = new ProductUpdatedEvent
+            {
+                ProductId = product.Id,
+                Name = request.Name,
+                StockQuantity = request.StockQuantity,
+                Price = request.Price,
+                Description = request.Description,
+                Category = request.Category,
+                Status = request.Status
+            };
+            await _bus.PublishAsync("product.updated", evt);
 
             return true;
         }

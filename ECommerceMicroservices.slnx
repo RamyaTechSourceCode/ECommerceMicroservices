@@ -6,6 +6,12 @@
     <Project Path="ECommerce.Contracts/ECommerce.Contracts.csproj" Id="6612aa0f-2e4a-43e3-a6db-9212bc63d799" />
     <Project Path="ECommerce.Messaging/ECommerce.Messaging.csproj" Id="5bbe6404-d3a2-402e-9aba-aa5dd5d7664f" />
   </Folder>
+  <Folder Name="/services/CatalogService/">
+    <Project Path="Services/CatalogService/CatalogService.Api/CatalogService.Api.csproj" />
+    <Project Path="Services/CatalogService/CatalogService.Application/CatalogService.Application.csproj" />
+    <Project Path="Services/CatalogService/CatalogService.Domain/CatalogService.Domain.csproj" />
+    <Project Path="Services/CatalogService/CatalogService.Infrastructure/CatalogService.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/services/InventoryService/">
     <Project Path="Services/InventoryService/InventoryService.Api/InventoryService.Api.csproj" />
     <Project Path="Services/InventoryService/InventoryService.Application/InventoryService.Application.csproj" />

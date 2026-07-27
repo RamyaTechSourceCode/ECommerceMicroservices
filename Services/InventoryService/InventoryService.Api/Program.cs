@@ -62,7 +62,7 @@ builder.Services.AddMassTransit(x =>
                 {
                     e.ConfigureConsumer<ProductCreatedConsumer>(context);
                     e.AutoOffsetReset = AutoOffsetReset.Earliest;
-                });
+                }); 
 
             k.TopicEndpoint<ReserveInventoryCommand>(
               "reserve.inventory",

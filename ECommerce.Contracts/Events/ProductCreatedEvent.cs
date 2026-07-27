@@ -12,6 +12,10 @@ namespace ECommerce.Contracts.Events
         public string Name { get; init; }
 
         public int StockQuantity { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string Description { get; set; }
+        public string Category { get; set; }
+        public string Status { get; set; }
+        public decimal Price { get; set; }
+        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
     }
 }
