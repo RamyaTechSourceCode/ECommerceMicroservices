@@ -1,4 +1,6 @@
 using ApiGateway.Service;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +32,38 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
+// Load Azure Key Vault FIRST
+var keyVaultUri = new Uri(
+    builder.Configuration["KeyVault:Uri"]
+    ?? throw new InvalidOperationException("KeyVault:Uri is missing.")
+);
+
+// Use the Azure identity available to your development environment.
+// In Visual Studio, this can authenticate as your signed-in Azure user.
+var credential = new DefaultAzureCredential();
+
+builder.Configuration.AddAzureKeyVault(
+    keyVaultUri,
+    credential);
+
+//Validate Entra configuration BEFORE configuring Identity
+
+var entraSection = builder.Configuration.GetSection("AzureAd");
+
+Console.WriteLine(
+    $"Entra ClientId exists: {!string.IsNullOrWhiteSpace(
+        entraSection["ClientId"])}");
+
+Console.WriteLine(
+    $"Entra TenantId exists: {!string.IsNullOrWhiteSpace(
+        entraSection["TenantId"])}");
+
+Console.WriteLine(
+    $"Entra Instance exists: {!string.IsNullOrWhiteSpace(
+        entraSection["Instance"])}");
+
+// Authentication 
 
 builder.Services.AddAuthentication(options =>
 {
